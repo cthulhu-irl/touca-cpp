@@ -50,6 +50,7 @@ class ToucaConan(ConanFile):
         self.requires("fmt/8.0.1")
         self.requires("ghc-filesystem/1.5.8")
         self.requires("nlohmann_json/3.10.3")
+        self.requires("mpark-variant/1.4.0")
         if (
             self.options.with_examples
             or self.options.with_framework
@@ -64,6 +65,7 @@ class ToucaConan(ConanFile):
     def configure(self):
         self.options["fmt"].header_only = True
         self.options["flatbuffers"].header_only = True
+        self.options["mpark-variant"].header_only = True
         self.options["cpp-httplib"].with_openssl = self.options.with_openssl
 
     def _configure_cmake(self):
@@ -93,6 +95,7 @@ class ToucaConan(ConanFile):
             "fmt::fmt",
             "flatbuffers::flatbuffers",
             "ghc-filesystem::ghc-filesystem",
+            "mpark-variant/1.4.0",
             "nlohmann_json::nlohmann_json",
         ]
         if (
