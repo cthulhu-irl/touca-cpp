@@ -52,6 +52,7 @@ target_link_libraries(
         flatbuffers::flatbuffers
         fmt::fmt
         nlohmann_json::nlohmann_json
+        mpark_variant::mpark_variant
         $<$<PLATFORM_ID:Linux>:pthread>
 )
 
