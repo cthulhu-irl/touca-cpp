@@ -54,8 +54,9 @@ class deep_copy_ptr {
   using pointer = typename std::add_pointer<value_type>::type;
 
   template <typename... Args,
-            typename std::enable_if<std::is_constructible<T, Args...>::value,
-                                    bool>::type = true>
+            typename std::enable_if<
+              std::is_constructible<T, Args...>::value,
+              bool>::type = true>
   deep_copy_ptr(Args&&... args) noexcept(
       std::is_nothrow_constructible<T, Args...>::value)
       : ptr_(new value_type(std::forward<Args>(args)...)) {}
@@ -81,6 +82,32 @@ class deep_copy_ptr {
     std::swap(ptr_, other.ptr_);
   }
 
+  friend bool operator==(const deep_copy_ptr<T>& lhs, const T& rhs) noexcept {
+    return *lhs == rhs;
+  }
+
+  friend bool operator==(const T& lhs, const deep_copy_ptr<T>& rhs) noexcept {
+    return lhs == *rhs;
+  }
+
+  friend bool operator==(const deep_copy_ptr<T>& lhs,
+                         const deep_copy_ptr<T>& rhs) noexcept {
+    return std::addressof(*lhs) == std::addressof(*rhs) || *lhs == *rhs;
+  }
+
+  friend bool operator!=(const deep_copy_ptr<T>& lhs, const T& rhs) noexcept {
+    return *lhs != rhs;
+  }
+
+  friend bool operator!=(const T& lhs, const deep_copy_ptr<T>& rhs) noexcept {
+    return lhs != *rhs;
+  }
+
+  friend bool operator!=(const deep_copy_ptr<T>& lhs,
+                         const deep_copy_ptr<T>& rhs) noexcept {
+    return std::addressof(*lhs) != std::addressof(*rhs) || *lhs != *rhs;
+  }
+
   value_type& operator*() & noexcept { return *ptr_; }
   const value_type& operator*() const& noexcept { return *ptr_; }
   value_type&& operator*() && noexcept { return *ptr_; }
@@ -89,7 +116,7 @@ class deep_copy_ptr {
   pointer operator->() noexcept { return ptr_.get(); }
   const pointer operator->() const noexcept { return ptr_.get(); }
 
-  operator value_type*() const
+  operator pointer() const
       noexcept(std::is_nothrow_copy_constructible<value_type>::value) {
     return ptr_.get();
   }
