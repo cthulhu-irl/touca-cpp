@@ -55,14 +55,20 @@ class deep_copy_ptr {
 
   template <typename... Args,
             typename std::enable_if<
-              std::is_constructible<T, Args...>::value,
+              (!std::is_array<T>::value || std::extent<T>::value != 0)
+              && std::is_constructible<T, Args...>::value,
               bool>::type = true>
-  deep_copy_ptr(Args&&... args) noexcept(
-      std::is_nothrow_constructible<T, Args...>::value)
+  deep_copy_ptr(Args&&... args)
       : ptr_(new value_type(std::forward<Args>(args)...)) {}
 
-  deep_copy_ptr(const deep_copy_ptr& other) noexcept(
-      std::is_nothrow_copy_constructible<value_type>::value)
+  template <typename T2 = T,
+            typename std::enable_if<
+              std::is_array<T2>::value && std::extent<T2>::value == 0,
+              bool>::type = true>
+  deep_copy_ptr(const std::size_t size)
+      : ptr_(new typename std::remove_extent<T>::type[size]) {}
+
+  deep_copy_ptr(const deep_copy_ptr& other)
       : ptr_(new value_type(*other)) {}
 
   deep_copy_ptr(deep_copy_ptr&& other) noexcept = default;
