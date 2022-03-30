@@ -8,7 +8,6 @@
 #include "touca/core/filesystem.hpp"
 #include "touca/core/types.hpp"
 #include "touca/internal/utils.hpp"
-#include "touca/internal/variant_helpers.hpp"
 
 namespace touca {
 
