@@ -238,8 +238,7 @@ TypeComparison compare(const data_point& src, const data_point& dst) {
 
     case detail::internal_type::number_float:
       compare_number<detail::number_float_t>(src.as_number_float(),
-                                             dst.as_number_float(),
-                                             cmp);
+                                             dst.as_number_float(), cmp);
       if (cmp.match != MatchType::Perfect) {
         cmp.dstValue = dst.to_string();
       }
@@ -281,7 +280,8 @@ TypeComparison compare(const data_point& src, const data_point& dst) {
       }
       break;
 
-    default: break; // unhandled
+    default:
+      break;  // unhandled
   }
 
   return cmp;

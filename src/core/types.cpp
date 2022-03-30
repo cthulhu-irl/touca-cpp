@@ -1,7 +1,6 @@
 // Copyright 2021 Touca, Inc. Subject to Apache-2.0 License.
 
 #include "touca/core/types.hpp"
-#include "touca/internal/utils.hpp"
 
 #include <cstddef>
 #include <type_traits>
@@ -10,6 +9,7 @@
 #include "flatbuffers/flatbuffers.h"
 #include "nlohmann/json.hpp"
 #include "touca/impl/schema.hpp"
+#include "touca/internal/utils.hpp"
 
 namespace touca {
 namespace detail {
@@ -146,7 +146,8 @@ class data_point_serializer_visitor {
 
  public:
   explicit data_point_serializer_visitor(
-      flatbuffers::FlatBufferBuilder& builder) : _builder(builder) {}
+      flatbuffers::FlatBufferBuilder& builder)
+      : _builder(builder) {}
 
   template <typename T>
   flatbuffers::Offset<fbs::TypeWrapper> operator()(const T& value) {
@@ -171,7 +172,9 @@ class data_point_to_json_visitor {
   explicit data_point_to_json_visitor(nlohmann::json& out) : _out(out) {}
 
   template <typename T>
-  void operator()(const T& value) { _out = nlohmann::json(value); }
+  void operator()(const T& value) {
+    _out = nlohmann::json(value);
+  }
 
   void operator()(const internal::deep_copy_ptr<std::string>& value) {
     _out = nlohmann::json(*value);
@@ -204,8 +207,8 @@ void data_point::increment() noexcept {
 
 flatbuffers::Offset<fbs::TypeWrapper> data_point::serialize(
     flatbuffers::FlatBufferBuilder& builder) const {
-  return internal::visit(
-      detail::data_point_serializer_visitor(builder), _value);
+  return internal::visit(detail::data_point_serializer_visitor(builder),
+                         _value);
 }
 
 std::string data_point::to_string() const {

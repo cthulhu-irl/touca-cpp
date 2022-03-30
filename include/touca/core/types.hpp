@@ -8,14 +8,14 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <tuple>
 
 #include "nlohmann/json_fwd.hpp"
-#include "touca/lib_api.hpp"
 #include "touca/internal/utils.hpp"
+#include "touca/lib_api.hpp"
 
 namespace flatbuffers {
 class FlatBufferBuilder;
@@ -109,7 +109,7 @@ class TOUCA_CLIENT_API object final {
     using type =
         typename std::remove_cv<typename std::remove_reference<T>::type>::type;
     _v.emplace(std::move(key),
-                serializer<type>().serialize(std::forward<T>(value)));
+               serializer<type>().serialize(std::forward<T>(value)));
     return *this;
   }
 
@@ -123,7 +123,7 @@ class TOUCA_CLIENT_API object final {
   detail::object_t::const_iterator cend() const { return _v.cend(); }
 
  private:
-  std::string      name;
+  std::string name;
   detail::object_t _v;
 };
 
@@ -135,16 +135,10 @@ class TOUCA_CLIENT_API data_point {
   friend void to_json(nlohmann::json& out, const data_point& value);
 
   using variant_type = internal::variant<
-    std::nullptr_t,
-    internal::deep_copy_ptr<object>,
-    internal::deep_copy_ptr<array>,
-    internal::deep_copy_ptr<detail::string_t>,
-    detail::boolean_t,
-    detail::number_signed_t,
-    detail::number_unsigned_t,
-    detail::number_float_t,
-    detail::number_double_t
-  >;
+      std::nullptr_t, internal::deep_copy_ptr<object>,
+      internal::deep_copy_ptr<array>, internal::deep_copy_ptr<detail::string_t>,
+      detail::boolean_t, detail::number_signed_t, detail::number_unsigned_t,
+      detail::number_float_t, detail::number_double_t>;
 
  public:
   data_point(const array& value)
@@ -196,9 +190,7 @@ class TOUCA_CLIENT_API data_point {
     return data_point(std::move(value));
   }
 
-  detail::internal_type type() const noexcept {
-    return _type;
-  }
+  detail::internal_type type() const noexcept { return _type; }
 
   detail::array_t* as_array() const noexcept {
     return &internal::get<internal::deep_copy_ptr<array>>(_value)->_v;
@@ -261,12 +253,12 @@ class TOUCA_CLIENT_API data_point {
       : _type(detail::internal_type::array), _value(std::move(arr)) {}
 
   explicit data_point(const detail::string_t& str)
-      : _type(detail::internal_type::string)
-      , _value(internal::deep_copy_ptr<detail::string_t>(str)) {}
+      : _type(detail::internal_type::string),
+        _value(internal::deep_copy_ptr<detail::string_t>(str)) {}
 
   explicit data_point(detail::string_t&& str)
-      : _type(detail::internal_type::string)
-      , _value(internal::deep_copy_ptr<detail::string_t>(std::move(str))) {}
+      : _type(detail::internal_type::string),
+        _value(internal::deep_copy_ptr<detail::string_t>(std::move(str))) {}
 
   explicit data_point(const internal::deep_copy_ptr<detail::string_t>& obj)
       : _type(detail::internal_type::string), _value(obj) {}
@@ -290,7 +282,7 @@ class TOUCA_CLIENT_API data_point {
       : _type(detail::internal_type::number_double), _value(number) {}
 
   detail::internal_type _type = detail::internal_type::null;
-  variant_type          _value;
+  variant_type _value;
 };
 
 /**
