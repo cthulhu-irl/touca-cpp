@@ -113,6 +113,22 @@ class deep_copy_ptr {
     return std::addressof(*lhs) != std::addressof(*rhs) || *lhs != *rhs;
   }
 
+  value_type& operator[](const std::size_t index) & noexcept {
+    return ptr_[index];
+  }
+  
+  const value_type& operator[](const std::size_t index) const& noexcept {
+    return ptr_[index];
+  }
+
+  value_type&& operator[](const std::size_t index) && noexcept {
+    return ptr_[index];
+  }
+
+  const value_type&& operator[](const std::size_t index) const&& noexcept {
+    return ptr_[index];
+  }
+
   value_type& operator*() & noexcept { return *ptr_; }
   const value_type& operator*() const& noexcept { return *ptr_; }
   value_type&& operator*() && noexcept { return *ptr_; }
