@@ -94,7 +94,7 @@ class ToucaConan(ConanFile):
             "fmt::fmt",
             "flatbuffers::flatbuffers",
             "ghc-filesystem::ghc-filesystem",
-            "mpark-variant/1.4.0",
+            "mpark_variant::mpark_variant",
             "nlohmann_json::nlohmann_json",
         ]
         if (
