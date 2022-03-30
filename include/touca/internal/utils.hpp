@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <utility>
 
-#if defined(TOUCA_HAS_CPP17) || defined(TUCA_HAS_CPP20)
+#ifdef TOUCA_HAS_CPP17
 #include <variant>
 #else
 #include "mpark/variant.hpp"
@@ -17,7 +17,7 @@
 namespace touca {
 namespace internal {
 
-#if defined(TOUCA_HAS_CPP17) || defined(TUCA_HAS_CPP20)
+#ifdef TOUCA_HAS_CPP17
 
 using std::get;
 using std::holds_alternative;
