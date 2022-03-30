@@ -116,7 +116,7 @@ class deep_copy_ptr {
   value_type& operator[](const std::size_t index) & noexcept {
     return ptr_[index];
   }
-  
+
   const value_type& operator[](const std::size_t index) const& noexcept {
     return ptr_[index];
   }
