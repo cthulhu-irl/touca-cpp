@@ -65,7 +65,6 @@ class ToucaConan(ConanFile):
     def configure(self):
         self.options["fmt"].header_only = True
         self.options["flatbuffers"].header_only = True
-        self.options["mpark-variant"].header_only = True
         self.options["cpp-httplib"].with_openssl = self.options.with_openssl
 
     def _configure_cmake(self):
