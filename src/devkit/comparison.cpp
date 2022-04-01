@@ -280,7 +280,7 @@ TypeComparison compare(const data_point& src, const data_point& dst) {
       break;
 
     default:
-      break;  // unhandled
+      break;
   }
 
   return cmp;
