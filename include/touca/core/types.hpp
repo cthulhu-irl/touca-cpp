@@ -134,12 +134,6 @@ class TOUCA_CLIENT_API data_point {
       const data_point& input);
   friend void to_json(nlohmann::json& out, const data_point& value);
 
-  using variant_type = internal::variant<
-      std::nullptr_t, internal::deep_copy_ptr<object>,
-      internal::deep_copy_ptr<array>, internal::deep_copy_ptr<detail::string_t>,
-      detail::boolean_t, detail::number_signed_t, detail::number_unsigned_t,
-      detail::number_float_t, detail::number_double_t>;
-
  public:
   data_point(const array& value)
       : _type(detail::internal_type::array),
@@ -282,7 +276,12 @@ class TOUCA_CLIENT_API data_point {
       : _type(detail::internal_type::number_double), _value(number) {}
 
   detail::internal_type _type = detail::internal_type::null;
-  variant_type _value;
+  internal::variant<
+      std::nullptr_t, internal::deep_copy_ptr<object>,
+      internal::deep_copy_ptr<array>, internal::deep_copy_ptr<detail::string_t>,
+      detail::boolean_t, detail::number_signed_t, detail::number_unsigned_t,
+      detail::number_float_t, detail::number_double_t>
+      _value;
 };
 
 /**
