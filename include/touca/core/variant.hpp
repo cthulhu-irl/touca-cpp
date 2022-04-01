@@ -8,6 +8,7 @@
 #include "mpark/variant.hpp"
 #endif
 
+#include <memory>
 #include <type_traits>
 #include <utility>
 
@@ -165,8 +166,7 @@ class deep_copy_ptr {
 
   ~deep_copy_ptr() = default;
 
-  void swap(deep_copy_ptr& other) noexcept(noexcept(std::swap(_ptr,
-                                                              other._ptr))) {
+  void swap(deep_copy_ptr& other) noexcept {
     std::swap(_ptr, other._ptr);
   }
 
