@@ -9,7 +9,7 @@
 #include "flatbuffers/flatbuffers.h"
 #include "nlohmann/json.hpp"
 #include "touca/impl/schema.hpp"
-#include "touca/internal/utils.hpp"
+#include "touca/core/variant.hpp"
 
 namespace touca {
 namespace detail {
@@ -156,7 +156,7 @@ class data_point_serializer_visitor {
 
   template <typename T>
   flatbuffers::Offset<fbs::TypeWrapper> operator()(
-      const internal::deep_copy_ptr<T>& ptr) {
+      const detail::deep_copy_ptr<T>& ptr) {
     return serialize(_builder, *ptr);
   }
 
@@ -176,18 +176,18 @@ class data_point_to_json_visitor {
     _out = nlohmann::json(value);
   }
 
-  void operator()(const internal::deep_copy_ptr<std::string>& value) {
+  void operator()(const detail::deep_copy_ptr<std::string>& value) {
     _out = nlohmann::json(*value);
   }
 
-  void operator()(const internal::deep_copy_ptr<array>& arr) {
+  void operator()(const detail::deep_copy_ptr<array>& arr) {
     _out = nlohmann::json::array();
     for (const auto& element : *arr) {
       _out.push_back(nlohmann::json(element));
     }
   }
 
-  void operator()(const internal::deep_copy_ptr<object>& obj) {
+  void operator()(const detail::deep_copy_ptr<object>& obj) {
     auto items = nlohmann::ordered_json::object();
     for (const auto& member : *obj) {
       items.emplace(member.first, nlohmann::json(member.second));
@@ -202,24 +202,23 @@ class data_point_to_json_visitor {
 }  // namespace detail
 
 void data_point::increment() noexcept {
-  ++internal::get<detail::number_unsigned_t>(_value);
+  ++detail::get<detail::number_unsigned_t>(_value);
 }
 
 flatbuffers::Offset<fbs::TypeWrapper> data_point::serialize(
     flatbuffers::FlatBufferBuilder& builder) const {
-  return internal::visit(detail::data_point_serializer_visitor(builder),
-                         _value);
+  return detail::visit(detail::data_point_serializer_visitor(builder), _value);
 }
 
 std::string data_point::to_string() const {
   if (_type == detail::internal_type::string)
-    return *internal::get<internal::deep_copy_ptr<detail::string_t>>(_value);
+    return *detail::get<detail::deep_copy_ptr<detail::string_t>>(_value);
 
   return nlohmann::json(*this).dump();
 }
 
 void to_json(nlohmann::json& out, const data_point& value) {
-  internal::visit(detail::data_point_to_json_visitor(out), value._value);
+  detail::visit(detail::data_point_to_json_visitor(out), value._value);
 }
 
 }  // namespace touca

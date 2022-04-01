@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "nlohmann/json_fwd.hpp"
-#include "touca/internal/utils.hpp"
+#include "touca/core/variant.hpp"
 #include "touca/lib_api.hpp"
 
 namespace flatbuffers {
@@ -137,19 +137,19 @@ class TOUCA_CLIENT_API data_point {
  public:
   data_point(const array& value)
       : _type(detail::internal_type::array),
-        _value(internal::deep_copy_ptr<array>(value)) {}
+        _value(detail::deep_copy_ptr<array>(value)) {}
 
   data_point(array&& value)
       : _type(detail::internal_type::array),
-        _value(internal::deep_copy_ptr<array>(std::move(value))) {}
+        _value(detail::deep_copy_ptr<array>(std::move(value))) {}
 
   data_point(const object& value)
       : _type(detail::internal_type::object),
-        _value(internal::deep_copy_ptr<object>(value)) {}
+        _value(detail::deep_copy_ptr<object>(value)) {}
 
   data_point(object&& value)
       : _type(detail::internal_type::object),
-        _value(internal::deep_copy_ptr<object>(std::move(value))) {}
+        _value(detail::deep_copy_ptr<object>(std::move(value))) {}
 
   static data_point null() noexcept { return data_point(nullptr); }
 
@@ -187,42 +187,42 @@ class TOUCA_CLIENT_API data_point {
   detail::internal_type type() const noexcept { return _type; }
 
   detail::array_t* as_array() const noexcept {
-    return &internal::get<internal::deep_copy_ptr<array>>(_value)->_v;
+    return &detail::get<detail::deep_copy_ptr<array>>(_value)->_v;
   }
 
   detail::object_t* as_object() const noexcept {
-    return &internal::get<internal::deep_copy_ptr<object>>(_value)->_v;
+    return &detail::get<detail::deep_copy_ptr<object>>(_value)->_v;
   }
 
   detail::string_t* as_string() const noexcept {
-    return internal::get<internal::deep_copy_ptr<detail::string_t>>(_value);
+    return detail::get<detail::deep_copy_ptr<detail::string_t>>(_value);
   }
 
   detail::boolean_t as_boolean() const noexcept {
-    return internal::get<detail::boolean_t>(_value);
+    return detail::get<detail::boolean_t>(_value);
   }
 
   detail::number_signed_t as_number_signed() const noexcept {
-    return internal::get<detail::number_signed_t>(_value);
+    return detail::get<detail::number_signed_t>(_value);
   }
 
   detail::number_unsigned_t as_number_unsigned() const noexcept {
-    return internal::get<detail::number_unsigned_t>(_value);
+    return detail::get<detail::number_unsigned_t>(_value);
   }
 
   detail::number_float_t as_number_float() const noexcept {
-    return internal::get<detail::number_float_t>(_value);
+    return detail::get<detail::number_float_t>(_value);
   }
 
   detail::number_double_t as_number_double() const noexcept {
-    return internal::get<detail::number_double_t>(_value);
+    return detail::get<detail::number_double_t>(_value);
   }
 
   void increment() noexcept;
   std::string to_string() const;
 
   detail::number_unsigned_t as_metric() const noexcept {
-    return internal::get<detail::number_unsigned_t>(_value);
+    return detail::get<detail::number_unsigned_t>(_value);
   }
 
   flatbuffers::Offset<fbs::TypeWrapper> serialize(
@@ -234,30 +234,30 @@ class TOUCA_CLIENT_API data_point {
       : _type(detail::internal_type::null), _value(nullptr) {}
 
   // overloads for different types
-  explicit data_point(internal::deep_copy_ptr<object>& obj)
+  explicit data_point(detail::deep_copy_ptr<object>& obj)
       : _type(detail::internal_type::object), _value(obj) {}
 
-  explicit data_point(internal::deep_copy_ptr<object>&& obj) noexcept
+  explicit data_point(detail::deep_copy_ptr<object>&& obj) noexcept
       : _type(detail::internal_type::object), _value(std::move(obj)) {}
 
-  explicit data_point(internal::deep_copy_ptr<array>& arr)
+  explicit data_point(detail::deep_copy_ptr<array>& arr)
       : _type(detail::internal_type::array), _value(arr) {}
 
-  explicit data_point(internal::deep_copy_ptr<array>&& arr) noexcept
+  explicit data_point(detail::deep_copy_ptr<array>&& arr) noexcept
       : _type(detail::internal_type::array), _value(std::move(arr)) {}
 
   explicit data_point(const detail::string_t& str)
       : _type(detail::internal_type::string),
-        _value(internal::deep_copy_ptr<detail::string_t>(str)) {}
+        _value(detail::deep_copy_ptr<detail::string_t>(str)) {}
 
   explicit data_point(detail::string_t&& str)
       : _type(detail::internal_type::string),
-        _value(internal::deep_copy_ptr<detail::string_t>(std::move(str))) {}
+        _value(detail::deep_copy_ptr<detail::string_t>(std::move(str))) {}
 
-  explicit data_point(const internal::deep_copy_ptr<detail::string_t>& obj)
+  explicit data_point(const detail::deep_copy_ptr<detail::string_t>& obj)
       : _type(detail::internal_type::string), _value(obj) {}
 
-  explicit data_point(internal::deep_copy_ptr<detail::string_t>&& obj) noexcept
+  explicit data_point(detail::deep_copy_ptr<detail::string_t>&& obj) noexcept
       : _type(detail::internal_type::string), _value(std::move(obj)) {}
 
   explicit data_point(detail::boolean_t boolean) noexcept
@@ -276,11 +276,11 @@ class TOUCA_CLIENT_API data_point {
       : _type(detail::internal_type::number_double), _value(number) {}
 
   detail::internal_type _type = detail::internal_type::null;
-  internal::variant<
-      std::nullptr_t, internal::deep_copy_ptr<object>,
-      internal::deep_copy_ptr<array>, internal::deep_copy_ptr<detail::string_t>,
-      detail::boolean_t, detail::number_signed_t, detail::number_unsigned_t,
-      detail::number_float_t, detail::number_double_t>
+  detail::variant<std::nullptr_t, detail::deep_copy_ptr<object>,
+                  detail::deep_copy_ptr<array>,
+                  detail::deep_copy_ptr<detail::string_t>, detail::boolean_t,
+                  detail::number_signed_t, detail::number_unsigned_t,
+                  detail::number_float_t, detail::number_double_t>
       _value;
 };
 

@@ -7,7 +7,6 @@
 #include "nlohmann/json.hpp"
 #include "touca/core/filesystem.hpp"
 #include "touca/core/types.hpp"
-#include "touca/internal/utils.hpp"
 
 namespace touca {
 
