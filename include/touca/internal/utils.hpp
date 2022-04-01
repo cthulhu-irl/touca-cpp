@@ -59,22 +59,22 @@ class deep_copy_ptr {
                     std::is_constructible<T, Args...>::value,
                 bool>::type = true>
   deep_copy_ptr(Args&&... args)
-      : ptr_(new value_type(std::forward<Args>(args)...)) {}
+      : _ptr(new value_type(std::forward<Args>(args)...)) {}
 
   template <typename T2 = T,
             typename std::enable_if<std::is_array<T2>::value &&
                                         std::extent<T2>::value == 0,
                                     bool>::type = true>
   deep_copy_ptr(const std::size_t size)
-      : ptr_(new typename std::remove_extent<T>::type[size]) {}
+      : _ptr(new typename std::remove_extent<T>::type[size]) {}
 
-  deep_copy_ptr(const deep_copy_ptr& other) : ptr_(new value_type(*other)) {}
+  deep_copy_ptr(const deep_copy_ptr& other) : _ptr(new value_type(*other)) {}
 
   deep_copy_ptr(deep_copy_ptr&& other) noexcept = default;
 
   deep_copy_ptr& operator=(const deep_copy_ptr& other) noexcept(
       std::is_nothrow_copy_assignable<value_type>::value) {
-    *ptr_ = *other.ptr_;
+    *_ptr = *other._ptr;
     return *this;
   }
 
@@ -82,9 +82,9 @@ class deep_copy_ptr {
 
   ~deep_copy_ptr() = default;
 
-  void swap(deep_copy_ptr& other) noexcept(noexcept(std::swap(ptr_,
-                                                              other.ptr_))) {
-    std::swap(ptr_, other.ptr_);
+  void swap(deep_copy_ptr& other) noexcept(noexcept(std::swap(_ptr,
+                                                              other._ptr))) {
+    std::swap(_ptr, other._ptr);
   }
 
   friend bool operator==(const deep_copy_ptr<T>& lhs, const T& rhs) noexcept {
@@ -114,36 +114,36 @@ class deep_copy_ptr {
   }
 
   value_type& operator[](const std::size_t index) & noexcept {
-    return ptr_[index];
+    return _ptr[index];
   }
 
   const value_type& operator[](const std::size_t index) const& noexcept {
-    return ptr_[index];
+    return _ptr[index];
   }
 
   value_type&& operator[](const std::size_t index) && noexcept {
-    return ptr_[index];
+    return _ptr[index];
   }
 
   const value_type&& operator[](const std::size_t index) const&& noexcept {
-    return ptr_[index];
+    return _ptr[index];
   }
 
-  value_type& operator*() & noexcept { return *ptr_; }
-  const value_type& operator*() const& noexcept { return *ptr_; }
-  value_type&& operator*() && noexcept { return *ptr_; }
-  const value_type&& operator*() const&& noexcept { return *ptr_; }
+  value_type& operator*() & noexcept { return *_ptr; }
+  const value_type& operator*() const& noexcept { return *_ptr; }
+  value_type&& operator*() && noexcept { return *_ptr; }
+  const value_type&& operator*() const&& noexcept { return *_ptr; }
 
-  pointer operator->() noexcept { return ptr_.get(); }
-  const pointer operator->() const noexcept { return ptr_.get(); }
+  pointer operator->() noexcept { return _ptr.get(); }
+  const pointer operator->() const noexcept { return _ptr.get(); }
 
   operator pointer() const
       noexcept(std::is_nothrow_copy_constructible<value_type>::value) {
-    return ptr_.get();
+    return _ptr.get();
   }
 
  private:
-  std::unique_ptr<value_type> ptr_;
+  std::unique_ptr<value_type> _ptr;
 };
 
 }  // namespace internal

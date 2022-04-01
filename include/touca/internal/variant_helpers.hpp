@@ -76,18 +76,18 @@ struct sink {
  */
 template <typename F>
 struct generic_overload {
-  F callable_;
+  F _callable;
 
   constexpr explicit generic_overload(const F& callable)
-      : callable_(callable) {}
+      : _callable(callable) {}
 
   constexpr explicit generic_overload(F&& callable)
-      : callable_(std::move(callable)) {}
+      : _callable(std::move(callable)) {}
 
   template <typename Arg>
   constexpr auto operator()(Arg&& arg) const ->
       typename std::result_of<F(Arg)>::type {
-    return callable_(std::forward<Arg>(arg));
+    return _callable(std::forward<Arg>(arg));
   }
 };
 
